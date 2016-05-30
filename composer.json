@@ -1,0 +1,25 @@
+{
+  "name": "madebymagnitude/sendgrid",
+  "description": "PHP Wrapper for the SendGrid API",
+  "homepage": "https://github.com/madebymagnitude/sendgrid",
+  "keywords": [
+	  "sendgrid",
+	  "php"
+  ],
+  "authors": [
+    {
+      "name": "Lewis Theobald",
+      "email": "hello@sofetch.me",
+      "role": "Developer"
+    }
+  ],
+  "require": {
+    "php": ">=5.5.0",
+    "guzzlehttp/guzzle": "^6.2"
+  },
+  "autoload": {
+	  "psr-4": {
+		  "SendGrid\\": "src/"
+      }
+  }
+}
