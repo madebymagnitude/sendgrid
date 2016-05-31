@@ -34,7 +34,7 @@ class Client {
 		}
 
 		// Make the POST request
-		$client->request('POST', $this->apiUrl.'api/mail.send.json', [
+		$this->client->request('POST', $this->apiUrl.'api/mail.send.json', [
 			'form_params' => $form,
 			'headers' => [
 				'Accept' => 'application/json',
