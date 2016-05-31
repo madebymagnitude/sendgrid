@@ -12,9 +12,16 @@ class Client {
 	 */
 	private $apiUrl = 'https://api.sendgrid.com/';
 
-	public function __construct()
+	/**
+	 * Store the API key
+	 * @var string
+	 */
+	private $apiKey = '';
+
+	public function __construct($apiKey)
 	{
 		$this->client = new \GuzzleHttp\Client();
+		$this->apiKey = $apiKey;
 	}
 
 	public function send(\SendGrid\Email $email)
