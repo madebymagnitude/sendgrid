@@ -10,7 +10,7 @@ class Client {
 	 * Store the API URL
 	 * @var string
 	 */
-	private $apiUrl = 'https://api.sendgrid.com/';
+	private $apiUrl = 'https://api.sendgrid.com/v3/';
 
 	/**
 	 * Store the API key
@@ -28,22 +28,18 @@ class Client {
 	{
 		$form = $email->jsonSerialize();
 
-		// Pass over the API key
-		if ($this->apiKey !== null) {
-			$form['api_key'] = $this->apiKey;
-		}
-
 		// Make the POST request
-		$this->client->request('POST', $this->apiUrl.'api/mail.send.json', [
-			'form_params' => $form,
+		$response = $this->client->request('POST', $this->apiUrl.'mail/send/beta', [
+			'json' => $form,
 			'headers' => [
-				'Accept' => 'application/json',
+				'Accept' => '*/*',
+				'Authorization' => 'Bearer '.$this->apiKey,
 				'Content-Type' => 'application/json'
 			]
 		]);
 
 		// Anything non-200 is an error code
-		if ($response->getStatusCode() != 200) {
+		if ($response->getStatusCode() !== 202) {
 			throw new \SendGrid\Exception($response->getBody(), $response->getStatusCode());
 		}
 

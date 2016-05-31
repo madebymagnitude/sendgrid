@@ -4,226 +4,101 @@ namespace SendGrid;
 
 class Email implements \JsonSerializable
 {
-	protected $to;
-	protected $toName;
-	protected $from;
-	protected $fromName;
-	protected $replyTo;
-	protected $cc;
-	protected $ccName;
-	protected $bcc;
-	protected $bccName;
-	protected $subject;
-	protected $text;
-	protected $html;
-	protected $date;
-	protected $headers;
-    protected $attachments;
-	protected $filters = [];
-	protected $section = [];
-	protected $category = [];
-	protected $uniqueArguments = [];
-	protected $substitutions = [];
+	private $to = [];
+	private $from = [];
+	private $replyTo = [];
+	private $cc = [];
+	private $bcc = [];
+	private $subject;
+	private $text;
+	private $html;
+	private $date;
+	private $headers = [];
+    private $attachments = [];
+	private $filters = [];
+	private $section = [];
+	private $category = [];
+	private $uniqueArguments = [];
+	private $substitutions = [];
+	private $templateId = null;
 
     public function __construct()
     {
-        $this->fromName = false;
         $this->replyTo = false;
     }
 
     public function addTo($email, $name = null)
     {
-        if ($this->to == null) {
-            $this->to = [];
-        }
+        $newTo = [
+			'email' => $email
+		];
 
-        if (is_array($email)) {
-            foreach ($email as $e) {
-                $this->to[] = $e;
-            }
-        } else {
-            $this->to[] = $email;
-        }
+		// Did they give us a name, include that as well
+		if (!empty($name)) {
+			$newTo['name'] = $name;
+		}
 
-        if (is_array($name)) {
-            foreach ($name as $n) {
-                $this->addToName($n);
-            }
-        } elseif ($name) {
-            $this->addToName($name);
-        }
-
+		// Set the to object
+		$this->to[] = $newTo;
         return $this;
     }
 
-    public function setTos(array $emails)
+	public function getTo()
+	{
+		return $this->to;
+	}
+
+    public function setFrom($email, $name = null)
     {
-        $this->to = $emails;
+        $this->from = [
+			'email' => $email,
+			'name' => $name
+		];
         return $this;
     }
 
-    public function addToName($name)
+    public function getFrom()
     {
-        if ($this->toName == null) {
-            $this->toName = [];
-        }
-
-        $this->toName[] = $name;
-        return $this;
-    }
-
-    public function getToNames()
-    {
-        return $this->toName;
-    }
-
-    public function setFrom($email)
-    {
-        $this->from = $email;
-        return $this;
-    }
-
-    public function getFrom($asArray = false)
-    {
-        if ($asArray && ($name = $this->getFromName())) {
-            return array($this->from => $name);
-        } else {
-            return $this->from;
-        }
-    }
-
-    public function setFromName($name)
-    {
-        $this->fromName = $name;
-        return $this;
-    }
-
-    public function getFromName()
-    {
-        return $this->fromName;
+        return $this->from;
     }
 
     public function setReplyTo($email)
     {
-        $this->replyTo = $email;
+        $this->replyTo = [
+			'email' => $email
+		];
         return $this;
     }
 
     public function getReplyTo()
     {
-        return $this->replyTo;
-    }
-
-    public function setCc($email)
-    {
-        $this->cc = array($email);
-        return $this;
-    }
-
-    public function setCcs(array $ccList)
-    {
-        $this->cc = $ccList;
-        return $this;
+        return (!empty($this->replyTo) ? $this->replyTo : $this->from);
     }
 
     public function addCc($email, $name = null)
     {
-        if ($this->cc == null) {
-            $this->cc = [];
-        }
-
-        if (is_array($email)) {
-            foreach ($email as $e) {
-                $this->cc[] = $e;
-            }
-        } else {
-            $this->cc[] = $email;
-        }
-
-        if (is_array($name)) {
-            foreach ($name as $n) {
-                $this->addCcName($n);
-            }
-        } elseif ($name) {
-            $this->addCcName($name);
-        }
-
+        $this->cc[] = [
+			'email' => $email,
+			'name' => $name
+		];
         return $this;
     }
 
-    public function addCcName($name)
-    {
-        if ($this->ccName == null) {
-            $this->ccName = [];
-        }
-
-        $this->ccName[] = $name;
-        return $this;
-    }
-
-    public function getCcs()
+    public function getCc()
     {
         return $this->cc;
     }
 
-    public function getCcNames()
-    {
-        return $this->ccName;
-    }
-
-    public function setBcc($email)
-    {
-        $this->bcc = array($email);
-        return $this;
-    }
-
-    public function setBccs($bccList)
-    {
-        $this->bcc = $bccList;
-        return $this;
-    }
-
     public function addBcc($email, $name = null)
     {
-        if ($this->bcc == null) {
-            $this->bcc = [];
-        }
-
-        if (is_array($email)) {
-            foreach ($email as $e) {
-                $this->bcc[] = $e;
-            }
-        } else {
-            $this->bcc[] = $email;
-        }
-
-        if (is_array($name)) {
-            foreach ($name as $n) {
-                $this->addBccName($n);
-            }
-        } elseif ($name) {
-            $this->addBccName($name);
-        }
-
+		$this->bcc[] = [
+			'email' => $email,
+			'name' => $name
+		];
         return $this;
     }
 
-    public function addBccName($name)
-    {
-        if ($this->bccName == null) {
-            $this->bccName = [];
-        }
-
-        $this->bccName[] = $name;
-        return $this;
-    }
-
-    public function getBccNames()
-    {
-        return $this->bccName;
-    }
-
-    public function getBccs()
+    public function getBcc()
     {
         return $this->bcc;
     }
@@ -258,7 +133,7 @@ class Email implements \JsonSerializable
 
     public function getText()
     {
-        return $this->text;
+        return (empty($this->text) ? '&nbsp;' : $this->text);
     }
 
     public function setHtml($html)
@@ -269,7 +144,7 @@ class Email implements \JsonSerializable
 
     public function getHtml()
     {
-        return $this->html;
+        return (empty($this->html) ? '&nbsp;' : $this->html);
     }
 
     /**
@@ -280,30 +155,24 @@ class Email implements \JsonSerializable
      */
     public function setTemplateId($templateId)
     {
-        $this->addFilter('templates', 'enabled', 1);
-        $this->addFilter('templates', 'template_id', $templateId);
-
+        $this->templateId = $templateId;
         return $this;
     }
 
-    public function getHeadersJson()
+	public function getTemplateId()
     {
-        if (count($this->getHeaders()) <= 0) {
-            return "{}";
-        }
-
-        return json_encode($this->getHeaders(), JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
-    }
-
-	public function getHeaders()
-    {
-        return $this->headers;
+        return $this->templateId;
     }
 
     public function setHeaders($headers)
     {
         $this->headers = $headers;
         return $this;
+    }
+
+	public function getHeaders()
+    {
+        return $this->headers;
     }
 
     public function addHeader($key, $value)
@@ -347,9 +216,9 @@ class Email implements \JsonSerializable
      * @param array $to_values
      * @return $this
      */
-    public function addSubstitution($fromValue, array $toValues)
+    public function addSubstitution($key, $name)
     {
-        $this->substitutions[$fromValue] = $toValues;
+        $this->substitutions[$key] = $name;
         return $this;
     }
 
@@ -363,6 +232,14 @@ class Email implements \JsonSerializable
         return $this;
     }
 
+	/**
+     * @return array
+     */
+    public function getSubstitutions()
+    {
+        return $this->substitutions;
+    }
+
     /**
      * @param mixed $key
      * @param mixed $value
@@ -370,7 +247,7 @@ class Email implements \JsonSerializable
      */
     public function addUniqueArgument($key, $value)
     {
-        $this->uniqueArguments[$key] = $value;
+        $this->uniqueArguments[$key] = (string) $value;
         return $this;
     }
 
@@ -449,45 +326,71 @@ class Email implements \JsonSerializable
 	 */
     public function jsonSerialize()
     {
-        $web = [
-			'to' => $this->to,
-			'subject' => $this->getSubject(),
+        $form = [
             'from' => $this->getFrom(),
-			'html' => $this->getHtml(),
-			'text' => $this->getText(),
-            'headers' => $this->getHeadersJson()
+			'content' => [
+				[
+					'type' => 'text',
+					'value' => $this->getText(),
+				],
+				[
+					'type' => 'html',
+					'value' => $this->getHtml()
+				]
+			]
         ];
 
-		if ($this->getFilters()) {
-			$web['x-smtpapi'] = json_encode([
-				'filters' => $this->getFilters()
-			]);
+		$indexCounter = 0;
+
+		// Add them as an individual array
+		foreach ($this->getTo() as $to) {
+
+			// Add a user object
+			$form['personalizations'][$indexCounter] = [
+				'to' => $this->getTo(),
+				'subject' => $this->getSubject(),
+			];
+
+			if (!empty($this->getSubstitutions())) {
+				$form['personalizations'][$indexCounter]['substitutions'] = $this->getSubstitutions();
+			}
+
+			if (!empty($this->getCc())) {
+				$form['personalizations'][$indexCounter]['cc'] = $this->getCc();
+			}
+
+			if (!empty($this->getBcc())) {
+				$form['personalizations'][$indexCounter]['bcc'] = $this->getBcc();
+			}
+
+			// Increment the tally
+			$indexCounter++;
 		}
-        if ($this->getToNames()) {
-            $web['toname'] = $this->getToNames();
-        }
-        if ($this->getCcs()) {
-            $web['cc'] = $this->getCcs();
-        }
-        if ($this->getCcNames()) {
-            $web['ccname'] = $this->getCcNames();
-        }
-        if ($this->getBccs()) {
-            $web['bcc'] = $this->getBccs();
-        }
-        if ($this->getBccNames()) {
-            $web['bccname'] = $this->getBccNames();
-        }
-        if ($this->getFromName()) {
-            $web['fromname'] = $this->getFromName();
-        }
-        if ($this->getReplyTo()) {
-            $web['replyto'] = $this->getReplyTo();
-        }
+
+		if (!empty($this->getTemplateId())) {
+			$form['template_id'] = $this->getTemplateId();
+		}
+
+		if (!empty($this->getReplyTo())) {
+			$form['reply_to'] = $this->getReplyTo();
+		}
+
+		if (!empty($this->getUniqueArguments())) {
+			$form['custom_args'] = $this->getUniqueArguments();
+		}
+
+		if (!empty($this->getFilters())) {
+			$form['filters'] = $this->getFilters();
+		}
+
+		if (!empty($this->getHeaders())) {
+			$form['headers'] = $this->getHeaders();
+		}
+
         if ($this->getDate()) {
-            $web['date'] = $this->getDate();
+            $form['date'] = $this->getDate();
         }
 
-		return $web;
+		return $form;
     }
 }
