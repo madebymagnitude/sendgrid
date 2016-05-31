@@ -368,7 +368,7 @@ class Email implements \JsonSerializable
      * @param mixed $value
      * @return $this
      */
-    public function addUniqueArg($key, $value)
+    public function addUniqueArgument($key, $value)
     {
         $this->uniqueArguments[$key] = $value;
         return $this;
@@ -378,10 +378,18 @@ class Email implements \JsonSerializable
      * @param array $key_value_pairs
      * @return $this
      */
-    public function setUniqueArgs(array $key_value_pairs)
+    public function setUniqueArguments(array $key_value_pairs)
     {
         $this->uniqueArguments = $key_value_pairs;
         return $this;
+    }
+
+	/**
+     * @return array
+     */
+    public function getUniqueArguments()
+    {
+        return $this->uniqueArguments;
     }
 
     /**
