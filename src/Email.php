@@ -327,22 +327,18 @@ class Email implements \JsonSerializable
     public function jsonSerialize()
     {
         $form = [
-            'from' => $this->getFrom()
-        ];
-
-		// Not using a template, so we need the content
-		if (empty($this->getTemplateId())) {
-			$form['content'] = [
+            'from' => $this->getFrom(),
+			'content' => [
 				[
-					'type' => 'text',
+					'type' => 'text/plain',
 					'value' => $this->getText(),
 				],
 				[
-					'type' => 'html',
+					'type' => 'text/html',
 					'value' => $this->getHtml()
 				]
-			];
-		}
+			]
+        ];
 
 		$indexCounter = 0;
 
