@@ -255,9 +255,9 @@ class Email implements \JsonSerializable
      * @param array $key_value_pairs
      * @return $this
      */
-    public function setUniqueArguments(array $key_value_pairs)
+    public function setUniqueArguments(array $arguments)
     {
-        $this->uniqueArguments = $key_value_pairs;
+        $this->uniqueArguments = $arguments;
         return $this;
     }
 
@@ -300,8 +300,8 @@ class Email implements \JsonSerializable
     }
 
     /**
-     * @param string $from_value
-     * @param string $to_value
+     * @param string $name
+     * @param string $value
      * @return $this
      */
     public function addSection($name, $value)
@@ -337,7 +337,13 @@ class Email implements \JsonSerializable
 					'type' => 'text/html',
 					'value' => $this->getHtml()
 				]
-			]
+			],
+			'date' => $this->getDate(),
+			'template_id' => $this->getTemplateId(),
+			'reply_to' => $this->getReplyTo(),
+			'custom_args' => $this->getUniqueArguments(),
+			'filters' => $this->getFilters(),
+			'headers' => $this->getHeaders()
         ];
 
 		$indexCounter = 0;
@@ -367,30 +373,6 @@ class Email implements \JsonSerializable
 			$indexCounter++;
 		}
 
-		if (!empty($this->getTemplateId())) {
-			$form['template_id'] = $this->getTemplateId();
-		}
-
-		if (!empty($this->getReplyTo())) {
-			$form['reply_to'] = $this->getReplyTo();
-		}
-
-		if (!empty($this->getUniqueArguments())) {
-			$form['custom_args'] = $this->getUniqueArguments();
-		}
-
-		if (!empty($this->getFilters())) {
-			$form['filters'] = $this->getFilters();
-		}
-
-		if (!empty($this->getHeaders())) {
-			$form['headers'] = $this->getHeaders();
-		}
-
-        if ($this->getDate()) {
-            $form['date'] = $this->getDate();
-        }
-
-		return $form;
+		return array_filter($form);
     }
 }
