@@ -143,7 +143,7 @@ class Client {
 		$form = $email->jsonSerialize();
 
 		// Make the POST request
-		$response = $this->client->request('POST', $this->apiUrl.'mail/send/beta', [
+		$response = $this->client->request('POST', $this->apiUrl.'mail/send', [
 			'json' => $form
 		]);
 
