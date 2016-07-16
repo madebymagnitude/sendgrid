@@ -218,7 +218,7 @@ class Email implements \JsonSerializable
      */
     public function addSubstitution($key, $name)
     {
-        $this->substitutions[$key] = $name;
+        $this->substitutions[$key] = (string) $name;
         return $this;
     }
 
@@ -228,7 +228,9 @@ class Email implements \JsonSerializable
      */
     public function setSubstitutions(array $substitutions)
     {
-        $this->substitutions = $substitutions;
+        foreach ($substitutions as $key => $value) {
+        	$this->addSubstitution($key, $value);
+        }
         return $this;
     }
 
